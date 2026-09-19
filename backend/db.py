@@ -142,7 +142,7 @@ def _guardar_postgres(cotizacion):
             total=str(cotizacion["total"]),
             usuario=cotizacion["usuario"],
         )
-        conexion.commit()
+        # pg8000.native hace autocommit; no existe .commit()
     finally:
         conexion.close()
 

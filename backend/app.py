@@ -112,7 +112,10 @@ def crear_cotizacion():
         return jsonify({"error": "Datos invalidos"}), 400
 
     resultado["usuario"] = usuario_de_token(_token_actual())
-    guardada = guardar(resultado)
+    try:
+        guardada = guardar(resultado)
+    except Exception:
+        return jsonify({"error": "No se pudo guardar la cotizacion"}), 500
     return jsonify(_a_json(guardada)), 201
 
 
