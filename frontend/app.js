@@ -90,7 +90,7 @@ function pintarLista(cotizaciones) {
   const contenedor = document.getElementById("lista-cotizaciones");
   if (!cotizaciones.length) {
     contenedor.innerHTML =
-      '<p class="text-sm text-slate-400">Aún no tienes cotizaciones. Calcula la primera a la izquierda.</p>';
+      '<p class="text-sm text-slate-400">Aún no tienes cotizaciones. Calcula la primer cotización.</p>';
     return;
   }
 
