@@ -186,3 +186,5 @@ def test_frontend_se_publica_en_la_raiz():
     assert "Cotizador de impuestos de importación" not in html
     assert "Código UUID" not in html
     assert "buscar-arancel" in html
+
+#Comando para ejecutar los tests: py -3 -m pytest -v
