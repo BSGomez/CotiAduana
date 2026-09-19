@@ -1,0 +1,7 @@
+Flask==3.0.3
+flask-cors==5.0.0
+python-dotenv==1.0.1
+pg8000==1.31.2
+gunicorn==23.0.0
+pytest==8.3.4
+pypdf==5.4.0

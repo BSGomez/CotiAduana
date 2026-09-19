@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CotiAduana | Cotizador Aduanero Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              aduana: {
+                900: "#0b1f33",
+                800: "#123047",
+                600: "#1d4e73",
+                400: "#3b82a0",
+                100: "#e8f1f6",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-800">
+    <section id="vista-login" class="min-h-screen grid place-items-center p-4">
+      <div class="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+        <p class="text-sm font-semibold uppercase tracking-widest text-aduana-400">Agencia aduanal</p>
+        <h1 class="mt-2 text-3xl font-bold text-aduana-900">CotiAduana</h1>
+        <form id="form-login" class="mt-6 space-y-4">
+          <label class="block text-sm font-medium">
+            Usuario
+            <input
+              id="usuario"
+              name="usuario"
+              autocomplete="username"
+              class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-aduana-400"
+              required
+            />
+          </label>
+          <label class="block text-sm font-medium">
+            Contraseña
+            <input
+              id="clave"
+              name="clave"
+              type="password"
+              autocomplete="current-password"
+              class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-aduana-400"
+              required
+            />
+          </label>
+          <p id="error-login" class="hidden text-sm text-red-600"></p>
+          <button
+            type="submit"
+            class="w-full rounded-lg bg-aduana-800 px-4 py-2.5 font-semibold text-white hover:bg-aduana-900"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <section id="vista-app" class="hidden">
+      <header class="bg-aduana-900 text-white">
+        <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+          <div>
+            <h1 class="text-xl font-bold">CotiAduana</h1>
+            <p class="text-xs text-slate-300">Cotizador aduanero digital</p>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <span id="nombre-usuario"></span>
+            <button id="btn-logout" class="rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/20">
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto grid max-w-5xl gap-6 px-4 py-8 lg:grid-cols-2">
+        <form id="form-cotizar" class="rounded-2xl bg-white p-6 shadow">
+          <h2 class="text-lg font-bold text-aduana-900">Nueva cotización</h2>
+          <div class="mt-4 space-y-4">
+            <label class="block text-sm font-medium">
+              Valor FOB
+              <input id="fob" type="number" min="0" step="0.01" required class="mt-1 w-full rounded-lg border px-3 py-2" />
+            </label>
+            <label class="block text-sm font-medium">
+              Flete
+              <input id="flete" type="number" min="0" step="0.01" required class="mt-1 w-full rounded-lg border px-3 py-2" />
+            </label>
+            <label class="block text-sm font-medium">
+              Seguro
+              <input id="seguro" type="number" min="0" step="0.01" required class="mt-1 w-full rounded-lg border px-3 py-2" />
+            </label>
+            <div>
+              <label class="block text-sm font-medium" for="buscar-arancel">Código SAC / mercancía</label>
+              <input
+                id="buscar-arancel"
+                type="search"
+                placeholder="Ej. 8506 o pilas"
+                class="mt-1 w-full rounded-lg border px-3 py-2"
+              />
+              <input type="hidden" id="categoria" required />
+              <p id="arancel-elegido" class="mt-2 text-sm text-aduana-800"></p>
+              <div id="sugerencias-arancel" class="mt-2 max-h-48 space-y-1 overflow-y-auto"></div>
+            </div>
+            <p id="error-cotizar" class="hidden text-sm text-red-600"></p>
+            <button class="w-full rounded-lg bg-aduana-800 px-4 py-2.5 font-semibold text-white hover:bg-aduana-900">
+              Calcular y guardar
+            </button>
+          </div>
+        </form>
+
+        <div class="space-y-6">
+          <article id="resultado" class="hidden rounded-2xl bg-white p-6 shadow">
+            <h2 class="text-lg font-bold text-aduana-900">Resultado</h2>
+            <p class="mt-2 text-xs uppercase tracking-wide text-slate-500">Referencia</p>
+            <p id="res-id" class="break-all font-mono text-sm text-aduana-600"></p>
+            <p id="res-sac" class="mt-2 text-sm font-semibold text-aduana-900"></p>
+            <p id="res-desc" class="text-sm text-slate-500"></p>
+            <dl class="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div><dt class="text-slate-500">DAI NMF</dt><dd id="res-tasa" class="font-semibold"></dd></div>
+              <div><dt class="text-slate-500">CIF</dt><dd id="res-cif" class="font-semibold"></dd></div>
+              <div><dt class="text-slate-500">DAI</dt><dd id="res-dai" class="font-semibold"></dd></div>
+              <div><dt class="text-slate-500">IVA</dt><dd id="res-iva" class="font-semibold"></dd></div>
+              <div><dt class="text-slate-500">Total impuestos</dt><dd id="res-impuestos" class="font-semibold"></dd></div>
+              <div class="col-span-2 rounded-lg bg-aduana-100 p-3">
+                <dt class="text-aduana-800">Total</dt>
+                <dd id="res-total" class="text-2xl font-bold text-aduana-900"></dd>
+              </div>
+            </dl>
+          </article>
+
+          <section class="rounded-2xl bg-white p-6 shadow">
+            <h2 class="text-lg font-bold text-aduana-900">Mis cotizaciones</h2>
+            <p class="mt-1 text-sm text-slate-500">Elige una de la lista para ver el detalle.</p>
+            <p id="error-lista" class="mt-2 hidden text-sm text-red-600"></p>
+            <div id="lista-cotizaciones" class="mt-4 space-y-2"></div>
+          </section>
+        </div>
+      </main>
+    </section>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
