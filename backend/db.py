@@ -46,9 +46,7 @@ def inicializar():
     schema = Path(__file__).with_name("schema.sql").read_text(encoding="utf-8")
     conexion = _conexion()
     try:
-        cursor = conexion.cursor()
-        cursor.execute(schema)
-        conexion.commit()
+        conexion.run(schema)
     finally:
         conexion.close()
 
@@ -88,6 +86,15 @@ def listar(usuario):
     return sorted(filas, key=lambda c: str(c.get("creado_en") or ""), reverse=True)
 
 
+def _ssl_contexto():
+    # Supabase/pooler a menudo usa cadena con certificado intermedio
+    # que falla con verificacion estricta en algunos hosts (Render).
+    contexto = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    contexto.check_hostname = False
+    contexto.verify_mode = ssl.CERT_NONE
+    return contexto
+
+
 def _conexion():
     import pg8000.native
 
@@ -104,8 +111,7 @@ def _conexion():
         "database": unquote(partes.path.lstrip("/") or "postgres"),
     }
     if kwargs["host"] not in ("localhost", "127.0.0.1"):
-        contexto = ssl.create_default_context()
-        kwargs["ssl_context"] = contexto
+        kwargs["ssl_context"] = _ssl_contexto()
     return pg8000.native.Connection(**kwargs)
 
 
